@@ -19,15 +19,15 @@ def LPF(f_xy):
     # 中心に円を描く
     draw = ImageDraw.Draw(x_pass_filter)
     # 円の半径
-    ellipse_r = 100
+    ellipse_r = 80
     # 画像の中心
     center = (shifted_f_uv.shape[1] // 2,
               shifted_f_uv.shape[0] // 2)
     # 円の座標
-    ellipse_pos = (center[1] - ellipse_r,
-                   center[0] - ellipse_r,
-                   center[1] + ellipse_r,
-                   center[0] + ellipse_r)
+    ellipse_pos = (center[0] - ellipse_r,
+                   center[1] - ellipse_r,
+                   center[0] + ellipse_r,
+                   center[1] + ellipse_r)
     draw.ellipse(ellipse_pos, fill=255)
     # フィルタ
     filter_array = np.asarray(x_pass_filter)
@@ -36,7 +36,9 @@ def LPF(f_xy):
     filtered_f_uv = np.multiply(shifted_f_uv, filter_array)
 
     # パワースペクトルに変換する
-    # magnitude_spectrum2d = 20 * np.log(np.absolute(filtered_f_uv))
+    magnitude_spectrum2d = 20 * np.log(np.absolute(filtered_f_uv))
+    # plt.imshow(magnitude_spectrum2d)
+    # plt.show()
 
     # 元の並びに直す
     unshifted_f_uv = np.fft.fftshift(filtered_f_uv)
@@ -89,6 +91,9 @@ def tracking(filename: str):
         fft_diff = fft/prev_fft
 
         frame = LPF(np.asarray(frame))
+
+        # plt.imshow(frame)
+        # plt.show()
         img2 = prev_frame - frame
 
         prev_fft = fft
@@ -112,4 +117,5 @@ def tracking(filename: str):
 
 if __name__ == '__main__':
     filename = 'istockphoto-1323125363-640_adpp_is.mp4'
+    filename = 'Calm Sea and Relaxing Sound of Waves [blAB_JqAJNw].f313.webm.part'
     tracking(filename)
